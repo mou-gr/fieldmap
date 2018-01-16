@@ -1,0 +1,19 @@
+{
+  "name": "fieldmap",
+  "version": "1.0.0",
+  "description": "Maps the stored fields of an invitation with their business meening. In pracitce it maps them with their label",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://git@github.com/mou-gr/fieldmap.git"
+  },
+  "author": "apanagio",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/mou-gr/fieldmap/issues"
+  },
+  "homepage": "https://github.com/mou-gr/fieldmap#readme"
+}
