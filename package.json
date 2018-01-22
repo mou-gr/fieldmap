@@ -4,7 +4,17 @@
   "description": "Maps the stored fields of an invitation with their business meening. In pracitce it maps them with their label",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": ">=7.4"
+  },
+  "dependencies": {
+    "command-line-args": "^4.0.7",
+    "eslint": "^4.11.0",
+    "mssql": "^4.0.4",
+    "ramda": "^0.24.1"
   },
   "repository": {
     "type": "git",
