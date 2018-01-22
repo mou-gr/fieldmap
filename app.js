@@ -3,10 +3,10 @@ const cla = require('command-line-args')
 const fieldmap = require('./fieldmap')
 
 const optionDefinitions = [
-  // { name: 'verbose', alias: 'v', type: Boolean },
-  // { name: 'src', type: String, multiple: true, defaultOption: true },
-  // { name: 'timeout', alias: 't', type: Number
-  { name: 'invitationId', alias: 'i', type: Number, defaultOption: true }
+    // { name: 'verbose', alias: 'v', type: Boolean },
+    // { name: 'src', type: String, multiple: true, defaultOption: true },
+    // { name: 'timeout', alias: 't', type: Number
+    { name: 'invitationId', alias: 'i', type: Number, defaultOption: true }
 
 ]
 
