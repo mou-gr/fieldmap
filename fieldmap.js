@@ -30,10 +30,9 @@ const groupByField = field => R.pipe(
 )
 
 const mergeColumns = function (weak, strong) {
-
     const weakColumns = groupByField('name')(weak)
     const strongColumns = groupByField('name')(strong)
-    const columns = Object.assign({}, weakColumns, strongColumns)
+    const columns = R.mergeWith(R.merge, weakColumns, strongColumns)
 
     return (Object.values(columns))
 }
@@ -129,30 +128,24 @@ const mergeCall = R.curry(function mergeCall(callData, metadata) {
     }, metadata)
 })
 
-const addCategory = function (form) {
-    const categoryColumn = R.filter(col => col.name === 'CpCategory')(form.columns)
-    return R.assoc('category', categoryColumn.length === 1 ? categoryColumn[0].value : null , form)
-}
-
-const removeHiddenColumns = R.filter(col => col.view && col.edit)
+const removeHiddenColumns = R.reject(col => col.view === '' && col.edit === '')
 const removeHiddenColumnsForm = form => R.assoc('columns', removeHiddenColumns(form.columns), form)
 
-//
 const explode = function (form) {
     return R.map(R.pipe(
         R.pick(['name', 'label', 'etype'])
-        , R.merge( {category: form.category, tableName1: R.split('.', form.name)[0], tableName2: R.split('.', form.name)[1]} )
+        , R.merge( {datafilter: form.datafilter, tableName1: R.split('.', form.name)[0], tableName2: R.split('.', form.name)[1]} )
     ))(form.columns)
 }
 
-const match = async function (callId, invitationId) {
-
-    const pool = await model.getConnection()
+const match = async function (pool, callId, invitationId) {
 
     const callData = await model.getInvitation(pool, invitationId)
     const parsedCallData = callData.length === 1 ? parseCallData(callData[0].JsonData) : {}
 
-    const keys = await model.getAllKeys(pool, callId)
+    const keyArr = await model.getAllKeys(pool, callId)
+    const keys = R.pluck('DataKey', keyArr)
+
     const json = await model.getAllJson(pool, keys)
 
     const finalData = R.map(
@@ -162,15 +155,19 @@ const match = async function (callId, invitationId) {
             , R.reject(R.isNil)
             , R.reduce(merge, {columns: []})
             , mergeCall(parsedCallData)
-            , addCategory
             , removeHiddenColumnsForm
             , explode
+            // , R.zipWith((a, b) => R.assoc('callPhaseId', a.CallPhaseID, b ))(keyArr) //add callPhase
         )
     )(keys)
+    // console.log(finalData)
 
-    model.closeConnection()
-
-    return R.flatten(finalData)
+    const xxx = R.pipe(
+        R.zipWith( (a, b) => R.map(R.assoc('callPhaseId', a.CallPhaseID)) (b)) (keyArr)
+        // , R.flatten
+    )(finalData)
+console.log(xxx);
+    return R.flatten(xxx)
 }
 
 module.exports = {match}
