@@ -15,7 +15,7 @@ const query = function(pool, str) {
     return pool.request().query(str)
         .catch(err => {
             console.log(str)
-            // console.log(err)
+            console.log(err)
             process.exit(-1)
         })
 }
@@ -60,11 +60,18 @@ const deleteExisting = function (pool, callId, invitationId) {
     const q = `delete from JsonData_Explained where callId = ${callId} and invitationId = ${invitationId}`
     return query(pool, q)
 }
-const insertFields = function (pool, callId, invitationId, callPhaseId, tableName1, tableName2, tableName3, datafilter, columnName, label, etype) {
+const insertFields = function (pool, callId, invitationId, callPhaseId, tableName1, tableName2, tableName3, datafilter, category, columnName, label, etype) {
     const q = `insert into JsonData_Explained
-        (CallId, invitationId, CallPhaseId, TableName1, tableName2, tableName3, datafilter, ColumnName, Label, Etype)
+        (CallId, invitationId, CallPhaseId, TableName1, tableName2, tableName3, datafilter, CpCategory, ColumnName, Label, Etype)
         values
-        (${callId},  ${invitationId == 0 ? 'NULL' : invitationId}, ${callPhaseId === undefined ? 'NULL' : callPhaseId}, '${tableName1}', '${tableName2}', '${tableName3}', @datafilter, '${columnName}', '${label}', '${etype}')`
+        (
+            ${callId},
+            ${invitationId == 0 ? 'NULL' : invitationId},
+            ${callPhaseId === undefined ? 'NULL' : callPhaseId},
+            '${tableName1}', '${tableName2}', '${tableName3}',
+            @datafilter,
+            ${category === undefined ? 'NULL' : category},
+            '${columnName}', '${label}', '${etype}')`
     //return query(pool, q)
     return pool.request()
         .input('datafilter', sql.VarChar(50), datafilter)

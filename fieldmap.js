@@ -128,13 +128,19 @@ const mergeCall = R.curry(function mergeCall(callData, metadata) {
     }, metadata)
 })
 
+const addCategory = function (form) {
+    const categoryColumn = R.filter(col => col.name === 'CpCategory')(form.columns)
+    return R.assoc('category', categoryColumn.length === 1 ? categoryColumn[0].value : null , form)
+}
+
+
 const removeHiddenColumns = R.reject(col => col.view === '' && col.edit === '')
 const removeHiddenColumnsForm = form => R.assoc('columns', removeHiddenColumns(form.columns), form)
 
 const explode = function (form) {
     return R.map(R.pipe(
         R.pick(['name', 'label', 'etype'])
-        , R.merge( {datafilter: form.datafilter, tableName1: R.split('.', form.name)[0], tableName2: R.split('.', form.name)[1]} )
+        , R.merge( {category: form.category, datafilter: form.datafilter, tableName1: R.split('.', form.name)[0], tableName2: R.split('.', form.name)[1]} )
     ))(form.columns)
 }
 
@@ -155,19 +161,17 @@ const match = async function (pool, callId, invitationId) {
             , R.reject(R.isNil)
             , R.reduce(merge, {columns: []})
             , mergeCall(parsedCallData)
+            , addCategory
             , removeHiddenColumnsForm
             , explode
-            // , R.zipWith((a, b) => R.assoc('callPhaseId', a.CallPhaseID, b ))(keyArr) //add callPhase
         )
     )(keys)
-    // console.log(finalData)
 
-    const xxx = R.pipe(
+    return R.pipe(
         R.zipWith( (a, b) => R.map(R.assoc('callPhaseId', a.CallPhaseID)) (b)) (keyArr)
-        // , R.flatten
+        , R.flatten
     )(finalData)
-console.log(xxx);
-    return R.flatten(xxx)
+
 }
 
 module.exports = {match}
