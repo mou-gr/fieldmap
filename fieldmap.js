@@ -30,8 +30,8 @@ const groupByField = field => R.pipe(
 )
 
 const mergeColumns = function (weak, strong) {
-    const weakColumns = groupByField('name')(weak)
-    const strongColumns = groupByField('name')(strong)
+    const weakColumns = groupByField('name')(weak || [])
+    const strongColumns = groupByField('name')(strong || [])
     const columns = R.mergeWith(R.merge, weakColumns, strongColumns)
 
     return (Object.values(columns))
