@@ -15,6 +15,7 @@ const updateDb = async function (callId, invitationId) {
     const pool = await model.getConnection()
 
     const mapping = await fieldmap.match(pool, callId, invitationId)
+
     await model.deleteExisting(pool, callId, invitationId)
     const res = mapping.map(el => model.insertFields(pool, callId, invitationId, el.callPhaseId, el.tableName1, el.tableName2, '', el.datafilter, el.category, el.name, el.label, el.etype))
     await Promise.all(res)
@@ -26,3 +27,4 @@ const updateDb = async function (callId, invitationId) {
 }
 
 updateDb(argc.callId, argc.invitationId)
+// updateDb(204, 1)

@@ -1,6 +1,7 @@
 'use strict'
 const R = require('ramda')
 const model = require('./model')
+const jsonHandler = require('./jsonExport')
 
 const hide = function hide(metadata, message) {
     var ret = metadata
@@ -160,7 +161,8 @@ const match = async function (pool, callId, invitationId) {
             , R.map(a => json[a])
             , R.reject(R.isNil)
             , R.reduce(merge, {columns: []})
-            , mergeCall(parsedCallData)
+            // , mergeCall(parsedCallData)
+            , jsonHandler.specialMerge(parsedCallData)
             , addCategory
             , removeHiddenColumnsForm
             , explode

@@ -70,14 +70,15 @@ const insertFields = function (pool, callId, invitationId, callPhaseId, tableNam
             ${callPhaseId === undefined ? 'NULL' : callPhaseId},
             '${tableName1}', '${tableName2}', '${tableName3}',
             @datafilter,
-            ${category === undefined ? 'NULL' : category},
-            '${columnName}', '${label}', '${etype}')`
+            ${category == undefined ? 'NULL' : "'" + category + "'"},
+            '${columnName}', @label, '${etype}')`
     //return query(pool, q)
     return pool.request()
         .input('datafilter', sql.VarChar(50), datafilter)
+        .input('label', sql.NVarChar, label )
         .query(q)
         .catch(err => {
-            console.log(q)
+            console.log(q, datafilter, label)
             console.log(err)
             process.exit(-1)
         })
