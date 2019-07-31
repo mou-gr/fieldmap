@@ -19,6 +19,11 @@ const query = function(pool, str) {
             process.exit(-1)
         })
 }
+const getAllInvitationIds = function (pool) {
+    return query(pool, 'select ID from invitation')
+        .then(R.prop('recordset'))
+        .then(R.pluck('ID'))
+}
 const getInvitation = function (pool, invitationId) {
     return query(pool, `select JsonData from invitation where ID = ${invitationId}`)
         .then(R.prop('recordset'))
@@ -52,10 +57,6 @@ const getJsonList = function (pool, callId) {
     const q = `select * from JsonData where CallID = ${callId}`
     return query(pool, q)
 }
-const getInvitationList = function (pool) {
-    const q = `select Name from Invitation`
-    return query(pool, q)
-}
 const deleteExisting = function (pool, callId, invitationId) {
     const q = `delete from JsonData_Explained where callId = ${callId} and invitationId = ${invitationId}`
     return query(pool, q)
@@ -85,4 +86,4 @@ const insertFields = function (pool, callId, invitationId, callPhaseId, tableNam
 }
 
 
-module.exports = {getConnection, closeConnection, getInvitationList, getJsonList, getAllJson, getAllKeys, getInvitation, splitKey, deleteExisting, insertFields}
+module.exports = {getConnection, closeConnection, getAllInvitationIds, getJsonList, getAllJson, getAllKeys, getInvitation, splitKey, deleteExisting, insertFields}
