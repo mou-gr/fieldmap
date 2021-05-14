@@ -92,14 +92,11 @@ const mergeColumns = function mergeColumns(weak, strong) {
 
     return [...weakOnly, ...strongOnly, ...common] //append everything
 }
+
 const merge = function merge (weak, strong) {
     /** merges two sets of metadata. Priority to the latter */
     if (!strong) { return weak }
-    if (strong.hidden == '1') {
-        const cols = R.map(a => ({name: a.name, view: '', edit: ''}))(weak.columns || [])
-        weak.columns = cols
-        return weak
-    }
+
     // if hiddenColumns, hide all weakColumns
     // exclude from hiding the columns that are in showColumns
     // exclude from hiding the columns that are explicitly declared
@@ -120,9 +117,49 @@ const merge = function merge (weak, strong) {
     return merged
 }
 const mergeCompiledData = function (mergeWith) {
-    return function (metaData, callData) {
+    const merged = function (metaData, callData) {
         return merge(metaData, callData.compiled[mergeWith])
     }
+
+    if (merged.hidden == '1') {
+        merged.columns = R.map(a => ({name: a.name, view: '', edit: ''}))(merged.columns || [])
+    }
+    return merged
 }
+
+
+
+// const merge = function merge (weak, strong) {
+//     /** merges two sets of metadata. Priority to the latter */
+//     if (!strong) { return weak }
+//     if (strong.hidden == '1') {
+//         const cols = R.map(a => ({name: a.name, view: '', edit: ''}))(weak.columns || [])
+//         weak.columns = cols
+//         return weak
+//     }
+//     // if hiddenColumns, hide all weakColumns
+//     // exclude from hiding the columns that are in showColumns
+//     // exclude from hiding the columns that are explicitly declared
+//     // default to [] when columns undefined
+//     const hiddenColumns = strong.hiddenColumns == '*' ? R.pluck('name', weak.columns || []) : strong.hiddenColumns || []
+//     const showColumns = strong.showColumns || []
+//     const declaredColumns = R.pluck('name', strong.columns || [])
+//     const finalHiddenColumns = R.difference(hiddenColumns, [...showColumns, ...declaredColumns])
+
+//     const hidden = R.map(a => ({'name': a, 'view': '', 'edit': ''}), finalHiddenColumns)
+
+//     const mergedHidden = mergeColumns(weak.columns || [], hidden)
+//     const columns = mergeColumns(mergedHidden, strong.columns || [])
+
+//     var merged = R.merge(weak, strong)
+//     merged.columns = columns
+
+//     return merged
+// }
+// const mergeCompiledData = function (mergeWith) {
+//     return function (metaData, callData) {
+//         return merge(metaData, callData.compiled[mergeWith])
+//     }
+// }
 
 module.exports = {specialMerge}

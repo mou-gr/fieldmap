@@ -13,10 +13,16 @@ const argc = cla(optionDefinitions)
 const updateDb = async function (callId, invitationId, pool) {
 
     const mapping = await fieldmap.match(pool, callId, invitationId)
-
     await model.deleteExisting(pool, callId, invitationId)
-    const res = mapping.map(el => model.insertFields(pool, callId, invitationId, el.callPhaseId, el.tableName1, el.tableName2, '', el.datafilter, el.category, el.name, el.label, el.etype))
-    await Promise.all(res)
+//    const res = mapping.map(el => model.insertFields(pool, callId, invitationId, el.callPhaseId, el.tableName1, el.tableName2, '', el.datafilter, el.category, el.name, el.label, el.etype))
+//    await Promise.all(res)
+
+    for (var i=0; i < mapping.length; i++   ) {
+	var el = mapping[i];
+	if (i % 1000 == 0) { console.log(i) }
+        await model.insertFields(pool, callId, invitationId, el.callPhaseId, el.tableName1, el.tableName2, '', el.datafilter, el.category, el.name, el.label, el.etype)
+    }
+
 
     console.log(`db updated succesfully call ${callId} invitation ${invitationId}`)
 }
