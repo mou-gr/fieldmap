@@ -3,4 +3,4 @@
 
 ## usage
 `node app.js -i [invitationId] -c [callId]`
-`node app.js -c [callID]` Map all invitations of specific call
+`node app.js -c [callID]` Map all invitations of specific call 
